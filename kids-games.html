@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎮 মজার গেমের দুনিয়া</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #00c6ff;
+    --purple: #7c3aed;
+    --pink: #f43f5e;
+    --yellow: #fbbf24;
+    --green: #22c55e;
+    --orange: #f97316;
+    --dark: #1e1b4b;
+    --light: #f0f9ff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Baloo Da 2', cursive;
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e3a5f 100%);
+    min-height: 100vh;
+    color: white;
+    overflow-x: hidden;
+  }
+
+  /* Stars background */
+  body::before {
+    content: '⭐ ✨ 🌟 ⭐ ✨ 🌟 ⭐ ✨ 🌟 ⭐ ✨ 🌟 ⭐ ✨ 🌟 ⭐';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    font-size: 12px;
+    opacity: 0.15;
+    pointer-events: none;
+    word-spacing: 40px;
+    line-height: 60px;
+    letter-spacing: 30px;
+    z-index: 0;
+  }
+
+  .container { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 20px; }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 30px 20px 20px;
+    animation: bounceIn 0.8s ease;
+  }
+  .header h1 {
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    font-weight: 800;
+    background: linear-gradient(90deg, #fbbf24, #f43f5e, #00c6ff, #22c55e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+    filter: drop-shadow(0 0 20px rgba(251,191,36,0.4));
+  }
+  .header p { color: #c4b5fd; font-size: 1.1rem; margin-top: 8px; }
+
+  /* Game Menu */
+  .game-menu {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin: 25px 0;
+  }
+  @media(max-width: 500px) { .game-menu { grid-template-columns: 1fr 1fr; gap: 10px; } }
+
+  .menu-btn {
+    background: rgba(255,255,255,0.08);
+    border: 2px solid rgba(255,255,255,0.15);
+    border-radius: 20px;
+    padding: 18px 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    color: white;
+    font-family: 'Baloo Da 2', cursive;
+  }
+  .menu-btn:hover { transform: translateY(-5px) scale(1.03); border-color: var(--yellow); background: rgba(255,255,255,0.15); }
+  .menu-btn.active { border-color: var(--yellow); background: rgba(251,191,36,0.2); box-shadow: 0 0 25px rgba(251,191,36,0.4); }
+  .menu-btn .icon { font-size: 2.5rem; display: block; margin-bottom: 8px; }
+  .menu-btn .name { font-size: 0.95rem; font-weight: 700; }
+  .menu-btn .tag { font-size: 0.7rem; color: #a5b4fc; margin-top: 3px; }
+
+  /* Game Area */
+  .game-area {
+    background: rgba(255,255,255,0.06);
+    border: 2px solid rgba(255,255,255,0.12);
+    border-radius: 25px;
+    padding: 25px;
+    backdrop-filter: blur(15px);
+    min-height: 400px;
+    animation: slideUp 0.4s ease;
+  }
+
+  .game-title {
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px dashed rgba(255,255,255,0.2);
+  }
+
+  /* === QUIZ GAME === */
+  .quiz-question {
+    background: rgba(124,58,237,0.3);
+    border: 2px solid rgba(124,58,237,0.5);
+    border-radius: 15px;
+    padding: 20px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+  .quiz-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .quiz-opt {
+    background: rgba(255,255,255,0.1);
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 14px;
+    cursor: pointer;
+    font-family: 'Baloo Da 2', cursive;
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .quiz-opt:hover { background: rgba(255,255,255,0.2); transform: scale(1.03); }
+  .quiz-opt.correct { background: rgba(34,197,94,0.4); border-color: #22c55e; animation: pulse 0.5s; }
+  .quiz-opt.wrong { background: rgba(244,63,94,0.4); border-color: #f43f5e; }
+  .quiz-score { text-align: center; font-size: 1.1rem; color: var(--yellow); margin-top: 15px; font-weight: 700; }
+  .quiz-feedback { text-align: center; font-size: 1.3rem; margin-top: 12px; min-height: 30px; font-weight: 700; }
+
+  /* === MATH GAME === */
+  .math-problem {
+    background: linear-gradient(135deg, rgba(34,197,94,0.2), rgba(0,198,255,0.2));
+    border: 2px solid rgba(34,197,94,0.4);
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+    letter-spacing: 5px;
+  }
+  .math-input-row { display: flex; gap: 10px; justify-content: center; align-items: center; }
+  .math-input {
+    background: rgba(255,255,255,0.1);
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 12px;
+    padding: 12px 20px;
+    font-size: 1.5rem;
+    font-family: 'Baloo Da 2', cursive;
+    color: white;
+    width: 120px;
+    text-align: center;
+  }
+  .math-input:focus { outline: none; border-color: var(--green); }
+  .math-result { text-align: center; margin-top: 15px; font-size: 1.3rem; min-height: 35px; font-weight: 700; }
+  .math-score { text-align: center; color: var(--yellow); font-size: 1rem; margin-top: 8px; font-weight: 700; }
+  .math-level { text-align: center; color: #a5b4fc; font-size: 0.9rem; margin-bottom: 10px; }
+
+  /* === PUZZLE (Memory Match) === */
+  .memory-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    max-width: 380px;
+    margin: 0 auto;
+  }
+  .memory-card {
+    aspect-ratio: 1;
+    background: linear-gradient(135deg, #7c3aed, #4f46e5);
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    transition: all 0.3s;
+    user-select: none;
+    position: relative;
+    transform-style: preserve-3d;
+  }
+  .memory-card:hover { transform: scale(1.05); }
+  .memory-card.flipped, .memory-card.matched {
+    background: linear-gradient(135deg, rgba(251,191,36,0.3), rgba(244,63,94,0.3));
+    border-color: var(--yellow);
+  }
+  .memory-card.matched { border-color: var(--green); background: linear-gradient(135deg, rgba(34,197,94,0.3), rgba(0,198,255,0.2)); }
+  .card-back { font-size: 1.5rem; }
+  .memory-info { text-align: center; margin-bottom: 15px; display: flex; justify-content: center; gap: 30px; }
+  .memory-stat { background: rgba(255,255,255,0.1); border-radius: 10px; padding: 8px 20px; font-weight: 700; font-size: 0.95rem; }
+
+  /* === ACTION GAME (Catch!) === */
+  #catchCanvas {
+    display: block;
+    margin: 0 auto;
+    border-radius: 15px;
+    border: 3px solid rgba(255,255,255,0.2);
+    cursor: none;
+    background: linear-gradient(180deg, #0f172a 0%, #1e3a5f 100%);
+  }
+  .catch-info { display: flex; justify-content: space-between; margin-bottom: 12px; }
+  .catch-stat {
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+  #catchStartBtn {
+    display: block;
+    margin: 15px auto 0;
+    background: linear-gradient(135deg, var(--pink), var(--orange));
+    border: none;
+    border-radius: 12px;
+    padding: 12px 35px;
+    font-size: 1.1rem;
+    font-family: 'Baloo Da 2', cursive;
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  #catchStartBtn:hover { transform: scale(1.05); }
+
+  /* Common Buttons */
+  .btn {
+    background: linear-gradient(135deg, var(--purple), #4f46e5);
+    border: none;
+    border-radius: 12px;
+    padding: 11px 28px;
+    font-size: 1rem;
+    font-family: 'Baloo Da 2', cursive;
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn:hover { transform: scale(1.05); filter: brightness(1.2); }
+  .btn-green { background: linear-gradient(135deg, var(--green), #059669); }
+  .btn-yellow { background: linear-gradient(135deg, var(--yellow), var(--orange)); color: #1e1b4b; }
+
+  .score-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--yellow), var(--orange));
+    color: #1e1b4b;
+    border-radius: 20px;
+    padding: 5px 18px;
+    font-weight: 800;
+    font-size: 1rem;
+  }
+
+  /* Animations */
+  @keyframes bounceIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    70% { transform: scale(1.05); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes pulse {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+  }
+  @keyframes pop {
+    0% { transform: scale(0); opacity:0; }
+    80% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity:1; }
+  }
+  .pop { animation: pop 0.3s ease; }
+
+  /* Home screen */
+  .home-screen { text-align: center; padding: 30px 20px; }
+  .home-screen h2 { font-size: 1.8rem; margin-bottom: 10px; color: var(--yellow); }
+  .home-screen p { color: #c4b5fd; font-size: 1.05rem; line-height: 1.7; }
+  .home-emoji { font-size: 5rem; margin-bottom: 15px; animation: bounceIn 1s ease; }
+
+  .hidden { display: none !important; }
+  .flex-center { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 15px; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <h1>🎮 মজার গেমের দুনিয়া 🎮</h1>
+    <p>শিখি, খেলি, মজা করি!</p>
+  </div>
+
+  <!-- Game Menu -->
+  <div class="game-menu">
+    <button class="menu-btn" onclick="showGame('home')" id="btn-home">
+      <span class="icon">🏠</span>
+      <span class="name">হোম</span>
+      <span class="tag">সব গেম</span>
+    </button>
+    <button class="menu-btn" onclick="showGame('quiz')" id="btn-quiz">
+      <span class="icon">🧠</span>
+      <span class="name">কুইজ গেম</span>
+      <span class="tag">জ্ঞান যাচাই</span>
+    </button>
+    <button class="menu-btn" onclick="showGame('math')" id="btn-math">
+      <span class="icon">🔢</span>
+      <span class="name">গণিত গেম</span>
+      <span class="tag">শিক্ষামূলক</span>
+    </button>
+    <button class="menu-btn" onclick="showGame('memory')" id="btn-memory">
+      <span class="icon">🧩</span>
+      <span class="name">মেমোরি পাজল</span>
+      <span class="tag">বুদ্ধির খেলা</span>
+    </button>
+    <button class="menu-btn" onclick="showGame('catch')" id="btn-catch" style="grid-column: span 2;">
+      <span class="icon">🚀</span>
+      <span class="name">তারা ধরো! (অ্যাকশন গেম)</span>
+      <span class="tag">দ্রুততা ও দক্ষতা</span>
+    </button>
+  </div>
+
+  <!-- Game Area -->
+  <div class="game-area" id="gameArea">
+    <!-- Home -->
+    <div id="game-home" class="home-screen">
+      <div class="home-emoji">🎮</div>
+      <h2>স্বাগতম! গেম বেছে নাও</h2>
+      <p>উপরের বাটন থেকে তোমার পছন্দের গেম বেছে নাও।<br>
+      শেখো, খেলো এবং মজা করো!</p>
+      <div style="margin-top:25px; display:flex; flex-wrap:wrap; justify-content:center; gap:12px;">
+        <div style="background:rgba(124,58,237,0.3);border-radius:12px;padding:12px 18px;font-size:0.9rem;">🧠 কুইজ গেম — সাধারণ জ্ঞান</div>
+        <div style="background:rgba(34,197,94,0.3);border-radius:12px;padding:12px 18px;font-size:0.9rem;">🔢 গণিত গেম — যোগ-বিয়োগ-গুণ</div>
+        <div style="background:rgba(251,191,36,0.3);border-radius:12px;padding:12px 18px;font-size:0.9rem;">🧩 মেমোরি পাজল — মিলাও</div>
+        <div style="background:rgba(244,63,94,0.3);border-radius:12px;padding:12px 18px;font-size:0.9rem;">🚀 তারা ধরো — অ্যাকশন</div>
+      </div>
+    </div>
+
+    <!-- Quiz Game -->
+    <div id="game-quiz" class="hidden">
+      <div class="game-title">🧠 কুইজ গেম</div>
+      <div class="quiz-question" id="quizQ">প্রশ্ন লোড হচ্ছে...</div>
+      <div class="quiz-options" id="quizOpts"></div>
+      <div class="quiz-feedback" id="quizFeedback"></div>
+      <div class="quiz-score" id="quizScore">স্কোর: 0</div>
+      <div class="flex-center" style="margin-top:15px;">
+        <button class="btn btn-yellow" onclick="nextQuiz()">পরের প্রশ্ন ➡️</button>
+        <button class="btn" onclick="resetQuiz()">🔄 নতুন করে</button>
+      </div>
+    </div>
+
+    <!-- Math Game -->
+    <div id="game-math" class="hidden">
+      <div class="game-title">🔢 গণিত গেম</div>
+      <div class="math-level" id="mathLevel">লেভেল ১ — যোগ</div>
+      <div class="math-problem" id="mathProb">? + ? = ?</div>
+      <div class="math-input-row">
+        <input class="math-input" type="number" id="mathAns" placeholder="?" onkeydown="if(event.key==='Enter')checkMath()">
+        <button class="btn btn-green" onclick="checkMath()">✅ দাও</button>
+      </div>
+      <div class="math-result" id="mathResult"></div>
+      <div class="math-score" id="mathScore">✅ সঠিক: 0 &nbsp; ❌ ভুল: 0 &nbsp; 🏆 লেভেল: 1</div>
+      <div class="flex-center">
+        <button class="btn" onclick="newMath()">⏭️ পরের অংক</button>
+        <button class="btn btn-yellow" onclick="resetMath()">🔄 রিসেট</button>
+      </div>
+    </div>
+
+    <!-- Memory Game -->
+    <div id="game-memory" class="hidden">
+      <div class="game-title">🧩 মেমোরি পাজল</div>
+      <div class="memory-info">
+        <div class="memory-stat">⏰ সময়: <span id="memTime">0</span> সেকেন্ড</div>
+        <div class="memory-stat">🔁 চেষ্টা: <span id="memTries">0</span></div>
+        <div class="memory-stat">✅ মিলেছে: <span id="memMatch">0</span>/8</div>
+      </div>
+      <div class="memory-grid" id="memGrid"></div>
+      <div class="flex-center">
+        <button class="btn btn-yellow" onclick="initMemory()">🔄 নতুন খেলা</button>
+      </div>
+    </div>
+
+    <!-- Catch Game -->
+    <div id="game-catch" class="hidden">
+      <div class="game-title">🚀 তারা ধরো!</div>
+      <div class="catch-info">
+        <div class="catch-stat">⭐ স্কোর: <span id="catchScore">0</span></div>
+        <div class="catch-stat">❤️ জীবন: <span id="catchLives">3</span></div>
+        <div class="catch-stat">⏱️ সময়: <span id="catchTime">30</span>s</div>
+      </div>
+      <canvas id="catchCanvas" width="420" height="300"></canvas>
+      <button id="catchStartBtn" onclick="startCatch()">▶️ শুরু করো!</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================
+// QUIZ GAME
+// ============================
+const quizData = [
+  { q: "বাংলাদেশের রাজধানীর নাম কী?", opts: ["ঢাকা", "চট্টগ্রাম", "রাজশাহী", "সিলেট"], ans: 0 },
+  { q: "সূর্য কোন দিকে ওঠে?", opts: ["পশ্চিম", "উত্তর", "পূর্ব", "দক্ষিণ"], ans: 2 },
+  { q: "একটি সপ্তাহে কয়টি দিন?", opts: ["৫টি", "৬টি", "৭টি", "৮টি"], ans: 2 },
+  { q: "পৃথিবীর সবচেয়ে বড় মহাসাগর কোনটি?", opts: ["আটলান্টিক", "প্রশান্ত", "ভারত", "আর্কটিক"], ans: 1 },
+  { q: "বাংলাদেশের জাতীয় ফুল কোনটি?", opts: ["গোলাপ", "শাপলা", "গাঁদা", "বেলি"], ans: 1 },
+  { q: "মানুষের হাতে কয়টি আঙুল?", opts: ["৮টি", "৯টি", "১০টি", "১২টি"], ans: 2 },
+  { q: "সবচেয়ে বড় প্রাণী কোনটি?", opts: ["হাতি", "নীল তিমি", "জিরাফ", "গণ্ডার"], ans: 1 },
+  { q: "বাংলাদেশের জাতীয় পাখির নাম কী?", opts: ["ময়না", "দোয়েল", "কোকিল", "টিয়া"], ans: 1 },
+  { q: "১ ডজনে কয়টি?", opts: ["১০টি", "১১টি", "১২টি", "১৩টি"], ans: 2 },
+  { q: "আকাশ কোন রঙের?", opts: ["সবুজ", "হলুদ", "নীল", "লাল"], ans: 2 },
+  { q: "পানির রাসায়নিক সংকেত কোনটি?", opts: ["CO2", "H2O", "O2", "NaCl"], ans: 1 },
+  { q: "বছরে কয়টি মাস?", opts: ["১০টি", "১১টি", "১২টি", "১৩টি"], ans: 2 },
+];
+let qIdx = 0, quizScore = 0, answered = false;
+let shuffledQ = [];
+
+function shuffleArr(arr) { return [...arr].sort(() => Math.random() - 0.5); }
+
+function initQuiz() {
+  shuffledQ = shuffleArr(quizData);
+  qIdx = 0; quizScore = 0; answered = false;
+  renderQuiz();
+}
+
+function renderQuiz() {
+  if (qIdx >= shuffledQ.length) {
+    document.getElementById('quizQ').textContent = '🎉 সব প্রশ্ন শেষ!';
+    document.getElementById('quizOpts').innerHTML = '';
+    document.getElementById('quizFeedback').textContent = `তোমার মোট স্কোর: ${quizScore}/${shuffledQ.length}`;
+    document.getElementById('quizFeedback').style.color = '#fbbf24';
+    return;
+  }
+  answered = false;
+  const cur = shuffledQ[qIdx];
+  document.getElementById('quizQ').textContent = `প্রশ্ন ${qIdx + 1}: ${cur.q}`;
+  document.getElementById('quizFeedback').textContent = '';
+  const opts = document.getElementById('quizOpts');
+  opts.innerHTML = '';
+  cur.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.textContent = opt;
+    btn.onclick = () => answerQuiz(i, btn, cur.ans);
+    opts.appendChild(btn);
+  });
+  document.getElementById('quizScore').textContent = `স্কোর: ${quizScore} | প্রশ্ন: ${qIdx + 1}/${shuffledQ.length}`;
+}
+
+function answerQuiz(chosen, btn, correct) {
+  if (answered) return;
+  answered = true;
+  const btns = document.querySelectorAll('.quiz-opt');
+  btns[correct].classList.add('correct');
+  if (chosen === correct) {
+    quizScore++;
+    document.getElementById('quizFeedback').textContent = '🎉 দারুণ! সঠিক উত্তর!';
+    document.getElementById('quizFeedback').style.color = '#22c55e';
+  } else {
+    btn.classList.add('wrong');
+    document.getElementById('quizFeedback').textContent = '😅 ভুল হয়েছে! চেষ্টা করো';
+    document.getElementById('quizFeedback').style.color = '#f43f5e';
+  }
+  document.getElementById('quizScore').textContent = `স্কোর: ${quizScore} | প্রশ্ন: ${qIdx + 1}/${shuffledQ.length}`;
+}
+
+function nextQuiz() { qIdx++; renderQuiz(); }
+function resetQuiz() { initQuiz(); }
+
+// ============================
+// MATH GAME
+// ============================
+let mathCorrect = 0, mathWrong = 0, mathLevel = 1;
+let mathA, mathB, mathOp, mathAnswer;
+
+function newMath() {
+  const ops = mathLevel === 1 ? ['+'] : mathLevel === 2 ? ['+', '-'] : ['+', '-', '×'];
+  mathOp = ops[Math.floor(Math.random() * ops.length)];
+  const max = mathLevel * 10;
+  mathA = Math.floor(Math.random() * max) + 1;
+  mathB = Math.floor(Math.random() * max) + 1;
+  if (mathOp === '-' && mathB > mathA) [mathA, mathB] = [mathB, mathA];
+  if (mathOp === '+') mathAnswer = mathA + mathB;
+  else if (mathOp === '-') mathAnswer = mathA - mathB;
+  else mathAnswer = mathA * mathB;
+
+  document.getElementById('mathProb').textContent = `${mathA} ${mathOp} ${mathB} = ?`;
+  document.getElementById('mathAns').value = '';
+  document.getElementById('mathResult').textContent = '';
+  document.getElementById('mathAns').focus();
+
+  const lvlNames = { 1: 'লেভেল ১ — যোগ', 2: 'লেভেল ২ — যোগ ও বিয়োগ', 3: 'লেভেল ৩ — গুণ সহ' };
+  document.getElementById('mathLevel').textContent = lvlNames[mathLevel] || `লেভেল ${mathLevel}`;
+}
+
+function checkMath() {
+  const ans = parseInt(document.getElementById('mathAns').value);
+  if (isNaN(ans)) { document.getElementById('mathResult').textContent = '⚠️ একটি সংখ্যা লেখো!'; return; }
+  const res = document.getElementById('mathResult');
+  if (ans === mathAnswer) {
+    mathCorrect++;
+    res.textContent = '🎉 সঠিক! দারুণ!';
+    res.style.color = '#22c55e';
+    if (mathCorrect % 5 === 0 && mathLevel < 3) { mathLevel++; }
+    setTimeout(newMath, 1000);
+  } else {
+    mathWrong++;
+    res.textContent = `❌ ভুল! সঠিক উত্তর: ${mathAnswer}`;
+    res.style.color = '#f43f5e';
+    setTimeout(newMath, 1500);
+  }
+  document.getElementById('mathScore').textContent = `✅ সঠিক: ${mathCorrect} ❌ ভুল: ${mathWrong} 🏆 লেভেল: ${mathLevel}`;
+}
+
+function resetMath() { mathCorrect = 0; mathWrong = 0; mathLevel = 1; newMath(); updateMathScore(); }
+function updateMathScore() {
+  document.getElementById('mathScore').textContent = `✅ সঠিক: ${mathCorrect} ❌ ভুল: ${mathWrong} 🏆 লেভেল: ${mathLevel}`;
+}
+
+// ============================
+// MEMORY GAME
+// ============================
+const emojis = ['🐶', '🐱', '🐸', '🌟', '🍎', '🎈', '🌈', '🦋'];
+let memCards = [], memFlipped = [], memMatched = 0, memTries = 0, memTimer = null, memSeconds = 0, memLocked = false;
+
+function initMemory() {
+  const pairs = [...emojis, ...emojis];
+  memCards = shuffleArr(pairs);
+  memFlipped = []; memMatched = 0; memTries = 0; memSeconds = 0; memLocked = false;
+  clearInterval(memTimer);
+  memTimer = setInterval(() => { memSeconds++; document.getElementById('memTime').textContent = memSeconds; }, 1000);
+  document.getElementById('memTries').textContent = 0;
+  document.getElementById('memMatch').textContent = '0';
+  document.getElementById('memTime').textContent = 0;
+  renderMemory();
+}
+
+function renderMemory() {
+  const grid = document.getElementById('memGrid');
+  grid.innerHTML = '';
+  memCards.forEach((emoji, i) => {
+    const card = document.createElement('div');
+    card.className = 'memory-card';
+    card.dataset.idx = i;
+    card.textContent = '❓';
+    card.onclick = () => flipCard(i, card);
+    grid.appendChild(card);
+  });
+}
+
+function flipCard(idx, card) {
+  if (memLocked || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+  card.textContent = memCards[idx];
+  card.classList.add('flipped');
+  memFlipped.push({ idx, card });
+  if (memFlipped.length === 2) {
+    memTries++;
+    document.getElementById('memTries').textContent = memTries;
+    memLocked = true;
+    const [a, b] = memFlipped;
+    if (memCards[a.idx] === memCards[b.idx]) {
+      a.card.classList.add('matched'); b.card.classList.add('matched');
+      memFlipped = []; memLocked = false;
+      memMatched++;
+      document.getElementById('memMatch').textContent = memMatched;
+      if (memMatched === 8) {
+        clearInterval(memTimer);
+        setTimeout(() => alert(`🎉 দারুণ! তুমি জিতেছো!\n⏰ সময়: ${memSeconds} সেকেন্ড\n🔁 চেষ্টা: ${memTries}`), 300);
+      }
+    } else {
+      setTimeout(() => {
+        a.card.textContent = '❓'; b.card.textContent = '❓';
+        a.card.classList.remove('flipped'); b.card.classList.remove('flipped');
+        memFlipped = []; memLocked = false;
+      }, 1000);
+    }
+  }
+}
+
+// ============================
+// CATCH GAME (Canvas)
+// ============================
+const canvas = document.getElementById('catchCanvas');
+const ctx = canvas.getContext('2d');
+let catchRunning = false, catchSc = 0, catchLives = 3, catchTimeLeft = 30;
+let stars = [], bomb = null, basket = { x: 180, w: 70, h: 15 };
+let catchInterval, catchTimerInt, mouseX = 210;
+let animFrame;
+
+canvas.addEventListener('mousemove', e => {
+  const r = canvas.getBoundingClientRect();
+  mouseX = e.clientX - r.left;
+});
+canvas.addEventListener('touchmove', e => {
+  e.preventDefault();
+  const r = canvas.getBoundingClientRect();
+  mouseX = e.touches[0].clientX - r.left;
+}, { passive: false });
+
+function startCatch() {
+  catchSc = 0; catchLives = 3; catchTimeLeft = 30;
+  stars = []; bomb = null; catchRunning = true;
+  document.getElementById('catchStartBtn').textContent = '🔄 আবার খেলো';
+  updateCatchUI();
+  clearInterval(catchInterval);
+  clearInterval(catchTimerInt);
+  catchInterval = setInterval(spawnStar, 800);
+  catchTimerInt = setInterval(() => {
+    catchTimeLeft--;
+    document.getElementById('catchTime').textContent = catchTimeLeft;
+    if (catchTimeLeft <= 0) endCatch();
+  }, 1000);
+  if (animFrame) cancelAnimationFrame(animFrame);
+  catchLoop();
+}
+
+function spawnStar() {
+  if (!catchRunning) return;
+  if (Math.random() < 0.25) {
+    stars.push({ x: Math.random() * 380 + 20, y: -20, speed: 2 + catchSc * 0.05, type: 'bomb', emoji: '💣' });
+  } else {
+    const emj = ['⭐', '🌟', '✨', '💫'][Math.floor(Math.random() * 4)];
+    stars.push({ x: Math.random() * 380 + 20, y: -20, speed: 2 + catchSc * 0.03, type: 'star', emoji: emj });
+  }
+}
+
+function catchLoop() {
+  if (!catchRunning) return;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Background gradient
+  const bg = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  bg.addColorStop(0, '#0f172a'); bg.addColorStop(1, '#1e3a5f');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Basket
+  basket.x = mouseX - basket.w / 2;
+  basket.x = Math.max(0, Math.min(canvas.width - basket.w, basket.x));
+  ctx.fillStyle = '#fbbf24';
+  ctx.beginPath();
+  ctx.roundRect(basket.x, canvas.height - 35, basket.w, basket.h, 8);
+  ctx.fill();
+  ctx.fillStyle = '#f97316';
+  ctx.fillRect(basket.x + 5, canvas.height - 35, basket.w - 10, 5);
+
+  // Stars & bombs
+  for (let i = stars.length - 1; i >= 0; i--) {
+    const s = stars[i];
+    s.y += s.speed;
+    ctx.font = '28px serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(s.emoji, s.x, s.y);
+
+    // Caught
+    if (s.y > canvas.height - 50 && s.x > basket.x && s.x < basket.x + basket.w) {
+      if (s.type === 'star') catchSc++;
+      else { catchLives--; document.getElementById('catchLives').textContent = catchLives; if (catchLives <= 0) { endCatch(); return; } }
+      document.getElementById('catchScore').textContent = catchSc;
+      stars.splice(i, 1);
+    } else if (s.y > canvas.height) {
+      if (s.type === 'star') { catchLives--; document.getElementById('catchLives').textContent = catchLives; if (catchLives <= 0) { endCatch(); return; } }
+      stars.splice(i, 1);
+    }
+  }
+
+  animFrame = requestAnimationFrame(catchLoop);
+}
+
+function endCatch() {
+  catchRunning = false;
+  clearInterval(catchInterval);
+  clearInterval(catchTimerInt);
+  cancelAnimationFrame(animFrame);
+  ctx.fillStyle = 'rgba(0,0,0,0.6)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#fbbf24';
+  ctx.font = 'bold 30px Baloo Da 2, cursive';
+  ctx.textAlign = 'center';
+  ctx.fillText('🏆 খেলা শেষ!', canvas.width / 2, 120);
+  ctx.fillStyle = 'white';
+  ctx.font = '22px Baloo Da 2, cursive';
+  ctx.fillText(`স্কোর: ${catchSc} ⭐`, canvas.width / 2, 165);
+  ctx.font = '18px Baloo Da 2, cursive';
+  const msg = catchSc >= 20 ? '😎 অসাধারণ!' : catchSc >= 10 ? '👍 ভালো হয়েছে!' : '💪 আবার চেষ্টা করো!';
+  ctx.fillText(msg, canvas.width / 2, 200);
+}
+
+function updateCatchUI() {
+  document.getElementById('catchScore').textContent = catchSc;
+  document.getElementById('catchLives').textContent = catchLives;
+  document.getElementById('catchTime').textContent = catchTimeLeft;
+}
+
+// ============================
+// NAVIGATION
+// ============================
+function showGame(name) {
+  ['home', 'quiz', 'math', 'memory', 'catch'].forEach(g => {
+    document.getElementById('game-' + g).classList.add('hidden');
+    document.getElementById('btn-' + g)?.classList.remove('active');
+  });
+  document.getElementById('game-' + name).classList.remove('hidden');
+  document.getElementById('btn-' + name)?.classList.add('active');
+
+  // Init on first open
+  if (name === 'quiz') initQuiz();
+  if (name === 'math') newMath();
+  if (name === 'memory') initMemory();
+  if (name === 'catch') { catchRunning = false; ctx.clearRect(0, 0, canvas.width, canvas.height); }
+}
+
+// Start on home
+showGame('home');
+</script>
+</body>
+</html>
